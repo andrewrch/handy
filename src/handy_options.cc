@@ -4,11 +4,6 @@
 
 namespace handy
 {
-  HandyOptionsParser::HandyOptionsParser()
-  {
-  
-  }
-
   po::options_description HandyOptionsParser::initialiseCommandLineArgs()
   {
     po::options_description desc("Command line options");
@@ -17,13 +12,20 @@ namespace handy
       // Some weird operator overloading/chaining going on here
       ("help", "produce help message")
       ("logfile", po::value<std::string>()->default_value("handy_logfile")
-        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setLogfile), &options)), 
-       "specify log file")
+       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setLogfile), 
+           &options)), "specify log file")
     ;
 
     return desc;
   }
 
+  /**
+   * Parses the command line arguments and extracts all required
+   * information.
+   *
+   * @return boolean value.  Only ever false if the user has requested
+   * help.
+   */
   bool HandyOptionsParser::parse(int argc, char* argv[])
   {
     bool carryOn = true;
@@ -35,21 +37,17 @@ namespace handy
     {
       po::store(po::parse_command_line(argc, argv, desc), vm);
     }
-    catch (boost::program_options::unknown_option& e)
+    catch (boost::program_options::error& e)
     {
-      std::cerr << "Unknown option provided: " << e.what() << std::endl;
-      carryOn = false;
-    }
-    catch (boost::program_options::invalid_command_line_syntax& e)
-    {
-      std::cerr << "Invalid option syntax: " << e.what() << std::endl;
-      carryOn = false;
+      std::cerr << "An error has occured when parsing program options: (";
+      std::cerr << e.what() << ")" << std::endl;
+      throw HandyOptionsParsingException("Parsing failed");
     }
 
     if (vm.count("help")) 
     {
       std::cout << desc;
-      return false;
+      carryOn = false;
     }
 
     // Call notify to tidy everything up and store to the HandyOptions

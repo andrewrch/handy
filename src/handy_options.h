@@ -5,12 +5,8 @@
 #include <string>
 #include <iostream>
 
-/*
- * Structure to hold program options
- */
 namespace handy
 {
-
   // This is probably bad practise but it's only in my
   // namespace!
   namespace po = boost::program_options;
@@ -21,18 +17,20 @@ namespace handy
    * We throw this to let the main method know there has been a
    * problem when checking the command line or config file options
    */
-  class HandyOptionsException : public std::runtime_error
+  class HandyOptionsParsingException : public std::runtime_error
   {
     public:
-      HandyOptionsException(const std::string& msg) 
+      HandyOptionsParsingException(const std::string& msg) 
         : std::runtime_error(msg)
       { }
   };
 
   /*
+   * This is really just a data structure to hold program options to 
+   * pass to the main application class.
    *
-   * If anythign gets complicated in here I can use PO to attach 
-   * notify events
+   * I've added get/setters so that I can use boost::program_option's notify
+   * method.
    */
   class HandyOptions
   {
@@ -43,7 +41,6 @@ namespace handy
 
       void setLogfile(std::string l) { logfile = l; };
       std::string getLogfile() { return logfile; };
-
     private:
       std::string logfile;
   };
@@ -51,7 +48,7 @@ namespace handy
   class HandyOptionsParser
   {
     public:
-      HandyOptionsParser();
+      HandyOptionsParser() {};
       bool parse(int argc, char* argv[]);
       HandyOptions getHandyOptions() { return options; };
 

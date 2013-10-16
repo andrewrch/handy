@@ -40,17 +40,24 @@ int main(int argc, char* argv[])
   handy::HandyOptionsParser parser;
   bool carryOn = parser.parse(argc, argv);
 
+  // If help requested
   if (!carryOn)
     exit(0);
 
-  handy::HandyOptions options = parser.getHandyOptions();
+  handy::HandyOptions options;
+  try
+  {
+    options = parser.getHandyOptions();
+  }
+  catch (const handy::HandyOptionsParsingException& e)
+  {
+    exit(1);
+  }
 
   // Set up log file
   google::InitGoogleLogging(options.getLogfile().c_str());
 
-  LOG(INFO) << "This is a test innit";
-
-  // Build an app, pass command line arguments to be processed
+  // Build an app, pass program options
   handy::HandyApp *app = new handy::HandyApp(options);
 
   // Initialise GLFW
