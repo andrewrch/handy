@@ -1,10 +1,10 @@
 CC     = g++
-CFLAGS = -std=c++11 -g -I /usr/include/ImageMagick -I /usr/include/assimp
+CFLAGS = -std=c++11 -c -g -I /usr/include/ImageMagick -I /usr/include/assimp
 LDFLAGS = -lGL -lGLEW -lglfw -lboost_program_options -lboost_filesystem -lboost_system -lglog -lMagick++ -lassimp
 
 all: handy
 
-handy: handy_options.o texture.o mesh.o handy.o
+handy: handy_options.o texture.o mesh.o pipeline.o shader.o handy.o
 	$(CC) -o $@ $^ $(LDFLAGS)
 
 handy.o: src/handy.cc
@@ -17,6 +17,12 @@ texture.o: src/texture.cc
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 mesh.o: src/mesh.cc
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+shader.o: src/shader.cc
+	$(CC) $(CFLAGS) -c -o $@ $<
+	
+pipeline.o: src/pipeline.cc
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:

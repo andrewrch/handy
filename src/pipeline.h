@@ -11,7 +11,7 @@ namespace handy
   class Pipeline
   {
     public:
-      Pipeline(unsigned int w, unsigned int h);
+      Pipeline();
 
       void setPerspectiveProj(
           float fovy, 
@@ -34,9 +34,6 @@ namespace handy
       }
 
     private:
-      unsigned int width;
-      unsigned int height;
-
       struct {
         float fovy;
         float aspect;

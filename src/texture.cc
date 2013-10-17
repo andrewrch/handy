@@ -25,7 +25,7 @@ namespace handy
   {
       textureTarget = TextureTarget;
       fileName      = FileName;
-      image        = NULL;
+      image         = nullptr;
   }
 
   bool Texture::load()
@@ -64,9 +64,9 @@ namespace handy
       return true;
   }
 
-  void Texture::bind(GLenum TextureUnit)
+  void Texture::bind(GLenum textureUnit)
   {
-      glActiveTexture(TextureUnit);
+      glActiveTexture(textureUnit);
       glBindTexture(textureTarget, textureObject);
   }
 };

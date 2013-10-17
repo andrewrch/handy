@@ -108,10 +108,14 @@ namespace handy
     entries.resize(scene->mNumMeshes);
     textures.resize(scene->mNumMaterials);
 
+    LOG(INFO) << "Number of meshes: " << scene->mNumMeshes;
+    LOG(INFO) << "Number of materials: " << scene->mNumMaterials;
+
     // Initialize the meshes in the scene one by one
     for (unsigned int i = 0 ; i < entries.size() ; i++) 
     {
       const aiMesh* mesh = scene->mMeshes[i];
+      LOG(INFO) << "Initialising mesh: " << mesh->mName.C_Str();
       initMesh(i, mesh);
     }
 
@@ -121,24 +125,29 @@ namespace handy
   void Mesh::initMesh(unsigned int meshIndex, const aiMesh* mesh)
   {
     entries[meshIndex].materialIndex = mesh->mMaterialIndex;
+
+    LOG(INFO) << "Mesh " << meshIndex << " is material: " << mesh->mMaterialIndex;
     
     std::vector<Vertex> vertices;
     std::vector<unsigned int> indices;
 
     const aiVector3D zero(0.0f, 0.0f, 0.0f);
 
-    for (unsigned int i = 0 ; i < mesh->mNumVertices ; i++) {
-        const aiVector3D* pos      = &(mesh->mVertices[i]);
-        const aiVector3D* normal   = &(mesh->mNormals[i]);
-        const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? 
-          &(mesh->mTextureCoords[0][i]) : &zero;
+    LOG(INFO) << mesh->mNumVertices;
 
-        // Construct a Vertex
-        Vertex v(glm::vec3(pos->x, pos->y, pos->z),
-                 glm::vec2(texCoord->x, texCoord->y),
-                 glm::vec3(normal->x, normal->y, normal->z));
+    for (unsigned int i = 0 ; i < mesh->mNumVertices; i++) 
+    {
+      const aiVector3D* pos      = &(mesh->mVertices[i]);
+      const aiVector3D* normal   = &(mesh->mNormals[i]);
+      const aiVector3D* texCoord = mesh->HasTextureCoords(0) ? 
+        &(mesh->mTextureCoords[0][i]) : &zero;
 
-        vertices.push_back(v);
+      // Construct a Vertex
+      Vertex v(glm::vec3(pos->x, pos->y, pos->z),
+               glm::vec2(texCoord->x, texCoord->y),
+               glm::vec3(normal->x, normal->y, normal->z));
+
+      vertices.push_back(v);
     }
 
     for (unsigned int i = 0 ; i < mesh->mNumFaces ; i++) {
@@ -161,11 +170,10 @@ namespace handy
     bool ret = true;
 
     // Initialize the materials
-    for (unsigned int i = 0 ; i < scene->mNumMaterials ; i++) 
+    for (unsigned int i = 0 ; i < scene->mNumMaterials; i++) 
     {
       const aiMaterial* material = scene->mMaterials[i];
-
-      textures[i] = NULL;
+      textures[i] = nullptr;
 
       if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0) 
       {
@@ -175,7 +183,6 @@ namespace handy
             &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) 
         {
           fs::path fullPath(dir / path.data);
-          //std::string FullPath = Dir + "/" + Path.data;
           textures[i] = new Texture(GL_TEXTURE_2D, fullPath.string());
 
           if (!textures[i]->load()) 
@@ -191,9 +198,11 @@ namespace handy
       }
 
       // Load a white texture in case the model does not include its own texture
-      if (!textures[i]) {
-          textures[i] = new Texture(GL_TEXTURE_2D, "./white.png");
-          ret = textures[i]->load();
+      if (!textures[i]) 
+      {
+        textures[i] = new Texture(GL_TEXTURE_2D, "./white.png");
+        LOG(INFO) << "Loaded texture: ./white.png";
+        ret = textures[i]->load();
       }
     }
 

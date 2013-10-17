@@ -2,11 +2,18 @@
 
 namespace handy
 {
-  Pipeline::Pipeline(unsigned int w, unsigned int h) :
-      width(w),
-      height(h)
+  Pipeline::Pipeline()
   {
-    updateTransformations();
+    proj.fovy = 45.0f;
+    proj.aspect = 4.0 / 3.0; 
+    proj.zNear = 0.0f;
+    proj.zFar = 1000.0f;
+
+    // Some reasonably sensible default camera options
+    camera.pos = glm::vec3(100.0f, 0.0f, 0.0f);
+    camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+    camera.target = glm::vec3(0.0f, 0.0f, 0.0f);
+//    updateTransformations();
   }
 
   void Pipeline::setPerspectiveProj
@@ -39,6 +46,5 @@ namespace handy
                                            proj.zFar);
 
     VPTransformation = projTrans * VTransformation;
-
   }
 };

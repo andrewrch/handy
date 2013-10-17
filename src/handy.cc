@@ -6,11 +6,16 @@
 // GL
 #include <GL/glew.h>
 #include <GL/glfw.h>
+// GLM for vectors
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 // Logging
 #include <glog/logging.h>
 
 #include "handy_options.h"
 #include "mesh.h"
+#include "pipeline.h"
+#include "shader.h"
 
 namespace handy
 {
@@ -19,14 +24,59 @@ namespace handy
     public:
       HandyApp(HandyOptions options)
       {
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        //glFrontFace(GL_CCW);
+        //glCullFace(GL_BACK);
+        glEnable(GL_CULL_FACE);
+        //glDepthFunc(GL_GEQUAL);
+        glEnable(GL_DEPTH_TEST);
+        /* NOTE ******************************************************
+         * Basically everything here will be replaced with config file
+         * or command line arguments
+         ************************************************************/
+        glm::vec3 pos(1.0f, 0.0f, 5.0f);
+        glm::vec3 target(0.0f, 0.0f, 0.0f);
+        glm::vec3 up(0.0, 1.0f, 0.0f);
+        float aspect = (float) 640 / 480;
+        pipeline.setCamera(pos, target, up);
+        pipeline.setPerspectiveProj(45.6f, aspect, 0.0f, 100.0f);   
+
+        shader.loadFromFile(GL_VERTEX_SHADER, "src/shaders/hand.glslv");
+        shader.loadFromFile(GL_FRAGMENT_SHADER, "src/shaders/hand.glslf");
+        shader.createAndLinkProgram();
+        shader.use();
+
+        // WVP
+        glm::mat4 wvp = pipeline.getVPTrans();
+        GLuint wvpLocation = shader.addUniform("gWVP");
+        glUniformMatrix4fv(wvpLocation, 1, false, glm::value_ptr(wvp));
+        // WV
+        glm::mat4 world = pipeline.getVTrans();
+        GLuint worldLocation = shader.addUniform("gWorld");
+        glUniformMatrix4fv(worldLocation, 1, false, glm::value_ptr(world));
+
+        // Texture
+        GLuint sampler = shader.addUniform("gSampler");
+        glUniform1i(sampler, 0);
+
+        hand.loadMesh("hand_model/hand.dae");
       }
       bool run()
       {
+        if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
+          return false;
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hand.render();
+        glfwSwapBuffers();
+
+        return true;
       }
 
     private:
       Mesh hand;
-
+      Pipeline pipeline;
+      Shader shader;
   };
 };
 
@@ -59,9 +109,6 @@ int main(int argc, char* argv[])
   // Set up log file
   google::InitGoogleLogging(options.getLogfile().c_str());
 
-  // Build an app, pass program options
-  handy::HandyApp *app = new handy::HandyApp(options);
-
   // Initialise GLFW
   if (glfwInit() == GL_FALSE)
     shutdown(1);
@@ -77,13 +124,17 @@ int main(int argc, char* argv[])
 
   int major, minor, rev;
   glfwGetGLVersion(&major, &minor, &rev);
-  fprintf(stderr, "OpenGL version received: %d.%d.%d\n", major, minor, rev);
-  //glfwEnable(GLFW_STICKY_KEYS);
+  LOG(INFO) << "OpenGL version received: " \
+    << major << "." << minor << "." << rev;
+  glfwEnable(GLFW_STICKY_KEYS);
 
   if (glewInit() != GLEW_OK)
     shutdown(1);
 
-  // Run the main loop until it returns false
+  // Build an app, pass program options
+  handy::HandyApp *app = new handy::HandyApp(options);
+
+    // Run the main loop until it returns false
   do {} while (app->run());
 
   delete app;
