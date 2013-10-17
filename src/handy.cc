@@ -10,6 +10,7 @@
 #include <glog/logging.h>
 
 #include "handy_options.h"
+#include "mesh.h"
 
 namespace handy
 {
@@ -24,6 +25,7 @@ namespace handy
       }
 
     private:
+      Mesh hand;
 
   };
 };

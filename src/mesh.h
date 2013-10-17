@@ -1,89 +1,92 @@
 /*
+ *
+ * Copyright 2011 Etay Meiri, modified by Andrew Chambers
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *   it under the terms of the GNU General Public License as published by
+ *   the Free Software Foundation, either version 3 of the License, or
+ *   (at your option) any later version.
 
-	Copyright 2011 Etay Meiri
+ *   This program is distributed in the hope that it will be useful,
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *   GNU General Public License for more details.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+ *   You should have received a copy of the GNU General Public License
+ *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-
-#ifndef MESH_H
-#define	MESH_H
+#pragma once
 
 #include <map>
 #include <vector>
 #include <GL/glew.h>
-#include <Importer.hpp>      // C++ importer interface
-#include <scene.h>       // Output data structure
-#include <postprocess.h> // Post processing flags
 
-#include "util.h"
-#include "math_3d.h"
+// GLM for vectors
+#include <glm/glm.hpp>
+
+// Assimp for model loading
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>       // Output data structure
+#include <assimp/postprocess.h> // Post processing flags
+
 #include "texture.h"
 
-struct Vertex
+namespace handy
 {
-    Vector3f m_pos;
-    Vector2f m_tex;
-    Vector3f m_normal;
+  struct Vertex
+  {
+      Vertex() {}
+      Vertex(const glm::vec3& p, const glm::vec2& t, const glm::vec3& n)
+      {
+          pos    = p;
+          tex    = t;
+          normal = n;
+      }
 
-    Vertex() {}
+      glm::vec3 pos;
+      glm::vec2 tex;
+      glm::vec3 normal;
+  };
 
-    Vertex(const Vector3f& pos, const Vector2f& tex, const Vector3f& normal)
-    {
-        m_pos    = pos;
-        m_tex    = tex;
-        m_normal = normal;
-    }
+  class Mesh
+  {
+    public:
+      Mesh() 
+      { };
+
+      ~Mesh() 
+      { 
+        clear(); 
+      }
+
+      bool loadMesh(const std::string& filename);
+      void render();
+
+    private:
+      bool initFromScene(const aiScene* scene, const std::string& filename);
+      void initMesh(unsigned int index, const aiMesh* aiMesh);
+      bool initMaterials(const aiScene* scene, const std::string& filename);
+      void clear();
+
+      static const int INVALID_MATERIAL = 0xFFFFFFFF;
+      static const int INVALID_OGL_VALUE = 0xFFFFFFFF;
+
+      struct MeshEntry {
+          MeshEntry();
+          ~MeshEntry();
+
+          void init(const std::vector<Vertex>& vertices,
+                    const std::vector<unsigned int>& indices);
+
+          GLuint VB;
+          GLuint IB;
+          unsigned int numIndices;
+          unsigned int materialIndex;
+      };
+
+      // Keep this to support multiple hands
+      std::vector<MeshEntry> entries;
+      std::vector<Texture*> textures;
+  };
 };
-
-
-class Mesh
-{
-public:
-    Mesh();
-
-    ~Mesh();
-
-    bool LoadMesh(const std::string& Filename);
-
-    void Render();
-
-private:
-    bool InitFromScene(const aiScene* pScene, const std::string& Filename);
-    void InitMesh(unsigned int Index, const aiMesh* paiMesh);
-    bool InitMaterials(const aiScene* pScene, const std::string& Filename);
-    void Clear();
-
-#define INVALID_MATERIAL 0xFFFFFFFF
-
-    struct MeshEntry {
-        MeshEntry();
-
-        ~MeshEntry();
-
-        void Init(const std::vector<Vertex>& Vertices,
-                  const std::vector<unsigned int>& Indices);
-
-        GLuint VB;
-        GLuint IB;
-        unsigned int NumIndices;
-        unsigned int MaterialIndex;
-    };
-
-    std::vector<MeshEntry> m_Entries;
-    std::vector<Texture*> m_Textures;
-};
-
-
-#endif	/* MESH_H */
-
