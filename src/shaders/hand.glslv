@@ -20,12 +20,15 @@ void main()
     WorldPos0   = (gWorld * vec4(Position, 1.0)).xyz;
     //colour      = vec4(clamp(Position, 0.0, 1.0), 1.0);
 
-    uint b_mask = 0x1f;
+    uint mask = uint(0x1f);
+    uint uglVertexID = uint(gl_VertexID);
+
+    uint b_mask = mask;
     uint g_mask = b_mask << 5;
     uint r_mask = g_mask << 5;
-    float r = float((gl_VertexID & r_mask) >> 10) / 0x1f;
-    float g = float((gl_VertexID & g_mask) >> 5) / 0x1f;
-    float b = float((gl_VertexID & b_mask)) / 0x1f;
+    float r = float((uglVertexID & r_mask) >> 10) / mask;
+    float g = float((uglVertexID & g_mask) >> 5) / mask;
+    float b = float((uglVertexID & b_mask)) / mask;
 
     colour      = vec4(r, g, b, 1.0);
     //colour      = vec4(1.0, 1.0, 1.0, 1.0);
