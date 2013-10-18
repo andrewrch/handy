@@ -88,9 +88,8 @@ namespace handy
     
     bool ret = false;
     Assimp::Importer importer;
-
-    const aiScene* scene = importer.ReadFile(filename.c_str(), 
-        aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(filename, //aiProcessPreset_TargetRealtime_MaxQuality);
+      aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs);
     
     if (scene) 
       ret = initFromScene(scene, filename);
@@ -115,7 +114,7 @@ namespace handy
     for (unsigned int i = 0 ; i < entries.size() ; i++) 
     {
       const aiMesh* mesh = scene->mMeshes[i];
-      LOG(INFO) << "Initialising mesh: " << mesh->mName.C_Str();
+      LOG(INFO) << "Initialising mesh: " << mesh->mName.data;
       initMesh(i, mesh);
     }
 
@@ -134,6 +133,7 @@ namespace handy
     const aiVector3D zero(0.0f, 0.0f, 0.0f);
 
     LOG(INFO) << mesh->mNumVertices;
+    google::FlushLogFiles(google::INFO);
 
     for (unsigned int i = 0 ; i < mesh->mNumVertices; i++) 
     {

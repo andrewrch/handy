@@ -1,6 +1,6 @@
 CC     = g++
-CFLAGS = -std=c++11 -c -g -I /usr/include/ImageMagick -I /usr/include/assimp
-LDFLAGS = -lGL -lGLEW -lglfw -lboost_program_options -lboost_filesystem -lboost_system -lglog -lMagick++ -lassimp
+CFLAGS = -std=c++0x -c -g -I /usr/include/ImageMagick -I /usr/local/include/assimp
+LDFLAGS = -lGL -lGLEW -lglfw -lboost_program_options -lboost_filesystem -lboost_system -lglog -lMagick++ -L /usr/local/lib -lassimp
 
 all: handy
 
@@ -26,4 +26,4 @@ pipeline.o: src/pipeline.cc
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f handy handy_options.o handy.o
+	rm -f handy *.o

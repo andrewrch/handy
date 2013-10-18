@@ -24,9 +24,9 @@ namespace handy
     public:
       HandyApp(HandyOptions options)
       {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        //glFrontFace(GL_CCW);
-        //glCullFace(GL_BACK);
+        glClearColor(0.0f, 0.1f, 0.0f, 0.0f);
+        //glFrontFace(GL_CW);
+        glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
         //glDepthFunc(GL_GEQUAL);
         glEnable(GL_DEPTH_TEST);
@@ -34,15 +34,15 @@ namespace handy
          * Basically everything here will be replaced with config file
          * or command line arguments
          ************************************************************/
-        glm::vec3 pos(1.0f, 0.0f, 5.0f);
+        glm::vec3 pos(0.0f, 0.0f, 3.0f);
         glm::vec3 target(0.0f, 0.0f, 0.0f);
         glm::vec3 up(0.0, 1.0f, 0.0f);
         float aspect = (float) 640 / 480;
         pipeline.setCamera(pos, target, up);
-        pipeline.setPerspectiveProj(45.6f, aspect, 0.0f, 100.0f);   
+        pipeline.setPerspectiveProj(45.6f, aspect, 1.0f, 100.0f);   
 
         shader.loadFromFile(GL_VERTEX_SHADER, "src/shaders/hand.glslv");
-        shader.loadFromFile(GL_FRAGMENT_SHADER, "src/shaders/hand.glslf");
+        shader.loadFromFile(GL_FRAGMENT_SHADER, "src/shaders/colours.glslf");
         shader.createAndLinkProgram();
         shader.use();
 
@@ -50,6 +50,9 @@ namespace handy
         glm::mat4 wvp = pipeline.getVPTrans();
         GLuint wvpLocation = shader.addUniform("gWVP");
         glUniformMatrix4fv(wvpLocation, 1, false, glm::value_ptr(wvp));
+
+        for (int i = 0; i < 4; i++)
+          LOG(INFO) << wvp[i][0] << " "  << wvp[i][1] << " " << wvp[i][2] << " " << wvp[i][3];
         // WV
         glm::mat4 world = pipeline.getVTrans();
         GLuint worldLocation = shader.addUniform("gWorld");
@@ -61,6 +64,7 @@ namespace handy
 
         hand.loadMesh("hand_model/hand.dae");
       }
+
       bool run()
       {
         if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
@@ -134,7 +138,7 @@ int main(int argc, char* argv[])
   // Build an app, pass program options
   handy::HandyApp *app = new handy::HandyApp(options);
 
-    // Run the main loop until it returns false
+  // Run the main loop until it returns false
   do {} while (app->run());
 
   delete app;

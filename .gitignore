@@ -1,5 +1,7 @@
 # Binary
 handy
+build
+build/*
 
 # Compiled Object files
 *.slo

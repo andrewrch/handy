@@ -37,12 +37,8 @@ namespace handy
   struct Vertex
   {
       Vertex() {}
-      Vertex(const glm::vec3& p, const glm::vec2& t, const glm::vec3& n)
-      {
-          pos    = p;
-          tex    = t;
-          normal = n;
-      }
+      Vertex(const glm::vec3& p, const glm::vec2& t, const glm::vec3& n) 
+      	: pos(p), tex(t), normal(n) { }
 
       glm::vec3 pos;
       glm::vec2 tex;

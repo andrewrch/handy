@@ -10,7 +10,7 @@ namespace handy
     proj.zFar = 1000.0f;
 
     // Some reasonably sensible default camera options
-    camera.pos = glm::vec3(100.0f, 0.0f, 0.0f);
+    camera.pos = glm::vec3(5.0f, 0.0f, 0.0f);
     camera.up = glm::vec3(0.0f, 1.0f, 0.0f);
     camera.target = glm::vec3(0.0f, 0.0f, 0.0f);
 //    updateTransformations();
