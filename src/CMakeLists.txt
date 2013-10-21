@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 2.8)
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
 # Search for packages that provide cmake configuration
 find_package(OpenGL)
 find_package(ImageMagick)
 find_package(ImageMagick COMPONENTS Magick++)
-find_package(GLEW)
+find_package(GLEW REQUIRED)
 
 # Search for packages do not provide cmake config but have pkgconfig
 find_package(PkgConfig REQUIRED)
@@ -13,7 +15,11 @@ find_package(PkgConfig REQUIRED)
 # Hide this for now as I don't need glfw3
 #pkg_search_module(GLFW REQUIRED glfw3) 
 
-pkg_search_module(GLFW REQUIRED glfw) 
+pkg_search_module(GLFW REQUIRED libglfw)
+
+if(GLFW_FOUND)
+message(STATUS "Found GLFW")
+endif(GLFW_FOUND)
 
 # Mannually set up other dependencies which probably have CMake configuraiton 
 # but I just don't bother to find out :-p
