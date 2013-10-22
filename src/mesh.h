@@ -2,7 +2,7 @@
  *
  * Copyright 2011 Etay Meiri, modified by Andrew Chambers
  *
- *  This program is free software: you can redistribute it and/or modify
+ *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
  *   the Free Software Foundation, either version 3 of the License, or
  *   (at your option) any later version.
@@ -87,7 +87,6 @@ namespace handy
         void addBoneData(uint boneID, float weight);
       };
 
-
       bool initFromScene(const std::string& filename);
       void initMesh(unsigned int index, const aiMesh* mesh,
                     std::vector<glm::vec3>& positions,
@@ -100,7 +99,6 @@ namespace handy
                      std::vector<VertexBoneData>& bones);
       bool initMaterials(const std::string& filename);
       void clear();
-
 
       enum VB_TYPES {
         INDEX_BUFFER = 0,
