@@ -53,11 +53,11 @@ namespace handy
       bool loadMesh(const std::string& filename);
       void render();
 
-    private:
+    protected:
 
       static const int INVALID_MATERIAL = 0xFFFFFFFF;
       static const int INVALID_OGL_VALUE = 0xFFFFFFFF;
-      static const int NUM_BONES_PER_VERTEX = 10;
+      static const int NUM_BONES_PER_VERTEX = 12;
 
       struct BoneInfo
       {
@@ -115,7 +115,7 @@ namespace handy
         TEX_COORD_LOCATION = 1, 
         NORMAL_LOCATION = 2,
         BONE_ID_LOCATION = 3,
-        BONE_WEIGHT_LOCATION = 4 
+        BONE_WEIGHT_LOCATION = 6 
       };
 
       // Pointers for the VAO

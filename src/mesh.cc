@@ -98,8 +98,12 @@ namespace handy
       // Copy matrix to GLM style matrix
       memcpy(&globalInverseTransform, &scene->mRootNode->mTransformation, 
         16*sizeof(GLfloat));
-      // Maybe not required.
       globalInverseTransform = glm::transpose(globalInverseTransform);
+      globalInverseTransform = glm::inverse(globalInverseTransform);
+
+      glm::mat4 m = globalInverseTransform;
+      for (int i = 0; i < 4; i++)
+        std::cout << m[i][0] << " " << m[i][1] << " " << m[i][2] << " " << m[i][3] << std::endl; 
       ret = initFromScene(filename);
     }
     else 
@@ -193,7 +197,7 @@ namespace handy
 	      &indices[0], GL_STATIC_DRAW);
 
     return glGetError() == GL_NO_ERROR;
-}
+  }
 
 
   void Mesh::initMesh(uint meshIndex,
@@ -251,10 +255,9 @@ namespace handy
 
         memcpy(&boneInfo[boneIndex].boneOffset, &mesh->mBones[i]->mOffsetMatrix,
             16*sizeof(GLfloat));
-
-        // Comment this out for now - different matrix types.  
-        //boneInfo[boneIndex].boneOffset = mesh->mBones[i]->mOffsetMatrix;            
-        // NOTE: MAY REQUIRE TRANSPOSE...
+        // Transpose because glm is column major
+        boneInfo[boneIndex].boneOffset = glm::transpose(
+            boneInfo[boneIndex].boneOffset);
         boneMapping[boneName] = boneIndex;
       }
       else 

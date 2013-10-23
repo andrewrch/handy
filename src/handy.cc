@@ -13,7 +13,7 @@
 #include <glog/logging.h>
 
 #include "handy_options.h"
-#include "mesh.h"
+#include "hand_mesh.h"
 #include "pipeline.h"
 #include "shader.h"
 
@@ -62,7 +62,7 @@ namespace handy
         GLuint sampler = shader.addUniform("gSampler");
         glUniform1i(sampler, 0);
 
-        hand.loadMesh("hand_model/hand.dae");
+        hand_mesh.loadMesh("hand_model/hand.dae");
       }
 
       bool run()
@@ -71,14 +71,14 @@ namespace handy
           return false;
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        hand.render();
+        hand_mesh.render();
         glfwSwapBuffers();
 
         return true;
       }
 
     private:
-      Mesh hand;
+      HandMesh hand_mesh;
       Pipeline pipeline;
       Shader shader;
   };
