@@ -34,7 +34,7 @@ namespace handy
          * Basically everything here will be replaced with config file
          * or command line arguments
          ************************************************************/
-        glm::vec3 pos(10.0f, 0.0f, 0.0f);
+        glm::vec3 pos(0.0f, 0.0f, 10.0f);
         glm::vec3 target(0.0f, 0.0f, 0.0f);
         glm::vec3 up(0.0, 1.0f, 0.0f);
         float aspect = (float) 640 / 480;
@@ -78,14 +78,15 @@ namespace handy
           pose[i] = 0;
 
         pose[0] = 0.0;
-        pose[10] = 0.0;
+        pose[10] = 0.5;
+        pose[17] = 1.0;
 
         auto transforms = hand_mesh.setPose(pose);
 
         std::cout << "Number bones " << transforms.size() << std::endl;
 
         for (int i = 0; i < transforms.size(); i++)
-          glUniformMatrix4fv(bones[i], 1, GL_TRUE, glm::value_ptr(transforms[i]));
+          glUniformMatrix4fv(bones[i], 1, false, glm::value_ptr(transforms[i]));
       }
 
       bool run()

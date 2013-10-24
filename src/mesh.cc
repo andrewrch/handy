@@ -101,7 +101,7 @@ namespace handy
       globalInverseTransform = glm::transpose(globalInverseTransform);
       globalInverseTransform = glm::inverse(globalInverseTransform);
 
-      glm::mat4 m = globalInverseTransform;
+      //glm::mat4 m = globalInverseTransform;
       //for (int i = 0; i < 4; i++)
       //  std::cout << m[i][0] << " " << m[i][1] << " " << m[i][2] << " " << m[i][3] << std::endl; 
       ret = initFromScene(filename);

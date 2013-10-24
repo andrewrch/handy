@@ -24,8 +24,9 @@ uniform mat4 gBones[MAX_BONES];
 
 void main()
 {       
-    mat4 boneTransform = mat4(1.0f); //gBones[boneIDs1[0]] * weights1[0];
-    for (int i = 0; i < 4; i++)
+    //mat4 boneTransform = mat4(1.0f); 
+    mat4 boneTransform = gBones[boneIDs1[0]] * weights1[0];
+    for (int i = 1; i < 4; i++)
       boneTransform += gBones[boneIDs1[i]] * weights1[i];
     for (int i = 0; i < 4; i++)
       boneTransform += gBones[boneIDs2[i]] * weights2[i];
@@ -33,6 +34,8 @@ void main()
       boneTransform += gBones[boneIDs3[i]] * weights3[i];
     for (int i = 0; i < 4; i++)
       boneTransform += gBones[boneIDs4[i]] * weights4[i];
+
+    //boneTransform = mat4(1.0f);
 
     vec4 PosL      = boneTransform * vec4(position, 1.0);
     gl_Position    = gWVP * PosL;

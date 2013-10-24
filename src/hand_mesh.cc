@@ -2,6 +2,7 @@
 #include <map>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <iostream>
 
 namespace handy
 {
@@ -41,7 +42,7 @@ namespace handy
     // Dont forget to normalise...
     quaternionRotation = glm::normalize(quaternionRotation);
     glm::mat4 globalRot = glm::toMat4(quaternionRotation);
-    matrices["root"] = globalTrans * globalRot;
+    matrices["carpals"] = globalTrans * globalRot;
 
     // Now put all the right numbers in the right place
     // // Beware this isn't very nice code :(
@@ -130,15 +131,23 @@ namespace handy
 
   void HandMesh::readNodeHeirarchy(const std::map<std::string,glm::mat4>& matrices,
                                    const aiNode* node, 
-                                   const glm::mat4 parentTransform)
+                                   const glm::mat4& parentTransform)
   { 
     std::string nodeName(node->mName.data);
-    glm::mat4 nodeTransformation(1.0f);
+    glm::mat4 nodeTransformation;
     memcpy(&nodeTransformation, &node->mTransformation, 16*sizeof(GLfloat));
     nodeTransformation = glm::transpose(nodeTransformation);
 
+
+    glm::mat4 m = nodeTransformation;
+    std::cout << "*******  " << nodeName << std::endl;
+    for (int i = 0; i < 4; i++)
+      std::cout << m[i][0] << " " << m[i][1] << " " << m[i][2] << " " << m[i][3] << std::endl; 
+
+    std::cout << "*******" << std::endl;
+
     if (matrices.find(nodeName) != matrices.end())
-      nodeTransformation = matrices.find(nodeName)->second;
+      nodeTransformation = nodeTransformation * matrices.find(nodeName)->second;
          
     glm::mat4 globalTransformation = parentTransform * nodeTransformation;
       
@@ -148,6 +157,8 @@ namespace handy
                                                   globalTransformation * 
                                                   boneInfo[boneIndex].boneOffset;
     }
+    else
+      std::cout << "Bone mapping not there: " << nodeName << std::endl;
     
     // Now process all children
     for (uint i = 0 ; i < node->mNumChildren ; i++) {

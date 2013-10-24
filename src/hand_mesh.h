@@ -49,7 +49,7 @@ namespace handy
           const std::vector<double>& p);
       void readNodeHeirarchy(const std::map<std::string,glm::mat4>& matrices,
                              const aiNode* node, 
-                             const glm::mat4 parentTransform);
+                             const glm::mat4& parentTransform);
 
 //      enum class PoseIndex 
 //      {
