@@ -24,7 +24,7 @@ namespace handy
     public:
       HandyApp(HandyOptions options)
       {
-        glClearColor(0.0f, 0.1f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         //glFrontFace(GL_CW);
         glCullFace(GL_BACK);
         glEnable(GL_CULL_FACE);
@@ -34,15 +34,14 @@ namespace handy
          * Basically everything here will be replaced with config file
          * or command line arguments
          ************************************************************/
-        glm::vec3 pos(0.0f, 0.0f, 10.0f);
-        glm::vec3 target(0.0f, 0.0f, 0.0f);
-        glm::vec3 up(0.0, 1.0f, 0.0f);
         float aspect = (float) 640 / 480;
-        pipeline.setCamera(pos, target, up);
+        pipeline.setCamera(options.getCameraPos(), 
+                           options.getCameraTarget(), 
+                           options.getCameraUp());
         pipeline.setPerspectiveProj(45.6f, aspect, 1.0f, 100.0f);   
 
-        shader.loadFromFile(GL_VERTEX_SHADER, "src/shaders/bones.glslv");
-        shader.loadFromFile(GL_FRAGMENT_SHADER, "src/shaders/bones.glslf");
+        shader.loadFromFile(GL_VERTEX_SHADER, options.getVertexShader());
+        shader.loadFromFile(GL_FRAGMENT_SHADER, options.getFragmentShader());
         shader.createAndLinkProgram();
         shader.use();
 
@@ -50,14 +49,10 @@ namespace handy
         glm::mat4 wvp = pipeline.getVPTrans();
         GLuint wvpLocation = shader.addUniform("gWVP");
         glUniformMatrix4fv(wvpLocation, 1, false, glm::value_ptr(wvp));
-
-        for (int i = 0; i < 4; i++)
-          LOG(INFO) << wvp[i][0] << " "  << wvp[i][1] << " " << wvp[i][2] << " " << wvp[i][3];
         // WV
         glm::mat4 world = pipeline.getVTrans();
         GLuint worldLocation = shader.addUniform("gWorld");
         glUniformMatrix4fv(worldLocation, 1, false, glm::value_ptr(world));
-
         // Texture
         GLuint sampler = shader.addUniform("gSampler");
         glUniform1i(sampler, 0);
@@ -72,7 +67,7 @@ namespace handy
           bones[i] = shader.addUniform(name);
         }
 
-        hand_mesh.loadMesh("hand_model/hand.dae");
+        hand_mesh.loadMesh(options.getHandFile());
         std::vector<double> pose(27);
         for (int i = 0; i < 27; i++)
           pose[i] = 0;

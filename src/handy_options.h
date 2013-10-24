@@ -1,6 +1,8 @@
 #pragma once
 
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
+#include <glm/glm.hpp>
 #include <exception>
 #include <string>
 #include <iostream>
@@ -32,21 +34,68 @@ namespace handy
    * I've added get/setters so that I can use boost::program_option's notify
    * method.
    */
-  class HandyOptions
+  class HandyOptions 
   {
     public:
       HandyOptions() :
-        logfile("")
+        logfile(""),
+        configFile(""),
+        handFile(""),
+        shaderDir(""),
+        fragmentShader(""),
+        vertexShader(""),
+        camPos(0.0f),
+        camTarget(0.0f),
+        camUp(0.0f)
       { }
 
-      void setLogfile(std::string l) { logfile = l; };
-      std::string getLogfile() { return logfile; };
+      void setLogfile(const std::string l) { logfile = l; std::cout << "logfile: " << l << std::endl; }
+      void setConfigFile(const std::string c) { configFile = c; std::cout << "conffile: " << c << std::endl;  }
+      void setHandFile(const std::string h) { handFile = h; }
+      void setShaderDir(const std::string s) { shaderDir = s; }
+      void setFragmentShader(const std::string f) { fragmentShader = f; }
+      void setVertexShader(const std::string v) { vertexShader = v; }
+      void setCamPosX(float x) { camPos.x = x; }
+      void setCamPosY(float y) { camPos.y = y; }
+      void setCamPosZ(float z) { camPos.z = z; }
+      void setCamLookX(float x) { camTarget.x = x; }
+      void setCamLookY(float y) { camTarget.y = y; }
+      void setCamLookZ(float z) { camTarget.y = z; }
+      void setCamUpX(float x) { camUp.x = x; }
+      void setCamUpY(float y) { camUp.y = y; }
+      void setCamUpZ(float z) { camUp.z = z; }
+
+      std::string& getLogfile() { return logfile; }
+      std::string& getConfigFile() { return configFile; }
+      std::string& getHandFile() { return handFile; }
+
+      std::string getFragmentShader() 
+      { 
+        return (boost::filesystem::path(shaderDir) / fragmentShader).string(); 
+      }
+      std::string getVertexShader()
+      {
+        return (boost::filesystem::path(shaderDir) / vertexShader).string(); 
+      }
+
+      glm::vec3 getCameraPos() { return camPos; }
+      glm::vec3 getCameraTarget() { return camTarget; }
+      glm::vec3 getCameraUp() { return camUp; }
+
     private:
+      // Logfile
       std::string logfile;
+      std::string configFile;
+      std::string handFile;
+      // Shaders
+      std::string shaderDir, fragmentShader, vertexShader;
+      // Camera properties
+      glm::vec3 camPos, camTarget, camUp;
   };
 
   class HandyOptionsParser
   {
+    friend HandyOptions;
     public:
       HandyOptionsParser() {};
       bool parse(int argc, char* argv[]);
@@ -54,6 +103,7 @@ namespace handy
 
     private:
       po::options_description initialiseCommandLineArgs();
+      po::options_description initialiseConfigFileArgs();
       HandyOptions options;
   };
 };
