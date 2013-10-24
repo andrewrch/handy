@@ -57,7 +57,7 @@ namespace handy
 
       static const int INVALID_MATERIAL = 0xFFFFFFFF;
       static const int INVALID_OGL_VALUE = 0xFFFFFFFF;
-      static const int NUM_BONES_PER_VERTEX = 12;
+      static const int NUM_BONES_PER_VERTEX = 16;
 
       struct BoneInfo
       {
@@ -115,7 +115,7 @@ namespace handy
         TEX_COORD_LOCATION = 1, 
         NORMAL_LOCATION = 2,
         BONE_ID_LOCATION = 3,
-        BONE_WEIGHT_LOCATION = 6 
+        BONE_WEIGHT_LOCATION = 7
       };
 
       // Pointers for the VAO

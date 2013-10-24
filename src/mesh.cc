@@ -102,8 +102,8 @@ namespace handy
       globalInverseTransform = glm::inverse(globalInverseTransform);
 
       glm::mat4 m = globalInverseTransform;
-      for (int i = 0; i < 4; i++)
-        std::cout << m[i][0] << " " << m[i][1] << " " << m[i][2] << " " << m[i][3] << std::endl; 
+      //for (int i = 0; i < 4; i++)
+      //  std::cout << m[i][0] << " " << m[i][1] << " " << m[i][2] << " " << m[i][3] << std::endl; 
       ret = initFromScene(filename);
     }
     else 
@@ -185,12 +185,22 @@ namespace handy
    	glBindBuffer(GL_ARRAY_BUFFER, buffers[BONE_VB]);
 	  glBufferData(GL_ARRAY_BUFFER, sizeof(bones[0]) * bones.size(), 
 	      &bones[0], GL_STATIC_DRAW);
-    glEnableVertexAttribArray(BONE_ID_LOCATION);
-    glVertexAttribIPointer(BONE_ID_LOCATION, 4, GL_INT, 
-        sizeof(VertexBoneData), (const GLvoid*)0);
-    glEnableVertexAttribArray(BONE_WEIGHT_LOCATION);    
-    glVertexAttribPointer(BONE_WEIGHT_LOCATION, 4, GL_FLOAT, GL_FALSE, 
-        sizeof(VertexBoneData), (const GLvoid*)16);
+
+    int i;
+    for (i = 0; i < 4; i++)
+    {
+      glEnableVertexAttribArray(BONE_ID_LOCATION + i);
+      glVertexAttribIPointer(BONE_ID_LOCATION + i, 4, GL_INT, 
+          sizeof(VertexBoneData), (const GLvoid*)(sizeof(GLint) * i * 4));
+    }
+
+    for (int j = 0; j < 4; j++)
+    {
+      glEnableVertexAttribArray(BONE_WEIGHT_LOCATION + j);    
+      glVertexAttribPointer(BONE_WEIGHT_LOCATION + j, 4, GL_FLOAT, GL_FALSE, 
+         sizeof(VertexBoneData), (const GLvoid*)(sizeof(GLfloat) * i * 4));
+      i++;
+    }
     
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[INDEX_BUFFER]);
 	  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * indices.size(), 

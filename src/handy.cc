@@ -34,15 +34,15 @@ namespace handy
          * Basically everything here will be replaced with config file
          * or command line arguments
          ************************************************************/
-        glm::vec3 pos(0.0f, 0.0f, 3.0f);
+        glm::vec3 pos(10.0f, 0.0f, 0.0f);
         glm::vec3 target(0.0f, 0.0f, 0.0f);
         glm::vec3 up(0.0, 1.0f, 0.0f);
         float aspect = (float) 640 / 480;
         pipeline.setCamera(pos, target, up);
         pipeline.setPerspectiveProj(45.6f, aspect, 1.0f, 100.0f);   
 
-        shader.loadFromFile(GL_VERTEX_SHADER, "src/shaders/hand.glslv");
-        shader.loadFromFile(GL_FRAGMENT_SHADER, "src/shaders/colours.glslf");
+        shader.loadFromFile(GL_VERTEX_SHADER, "src/shaders/bones.glslv");
+        shader.loadFromFile(GL_FRAGMENT_SHADER, "src/shaders/bones.glslf");
         shader.createAndLinkProgram();
         shader.use();
 
@@ -62,7 +62,30 @@ namespace handy
         GLuint sampler = shader.addUniform("gSampler");
         glUniform1i(sampler, 0);
 
+        const int BONES = 100;
+        GLuint bones[BONES];
+        for (int i = 0; i < BONES; i++)
+        {
+          char name[128];
+          memset(name, 0, sizeof(name));
+          snprintf(name, sizeof(name), "gBones[%d]", i);
+          bones[i] = shader.addUniform(name);
+        }
+
         hand_mesh.loadMesh("hand_model/hand.dae");
+        std::vector<double> pose(27);
+        for (int i = 0; i < 27; i++)
+          pose[i] = 0;
+
+        pose[0] = 0.0;
+        pose[10] = 0.0;
+
+        auto transforms = hand_mesh.setPose(pose);
+
+        std::cout << "Number bones " << transforms.size() << std::endl;
+
+        for (int i = 0; i < transforms.size(); i++)
+          glUniformMatrix4fv(bones[i], 1, GL_TRUE, glm::value_ptr(transforms[i]));
       }
 
       bool run()

@@ -44,8 +44,12 @@ namespace handy
   void Shader::loadFromString(GLenum type, const std::string& source) { 
     GLuint shader = glCreateShader (type);
 
-    const char * ptmp = source.c_str();
-    glShaderSource (shader, 1, &ptmp, NULL);
+
+    GLint textLength = static_cast<GLint>(source.size());
+    const GLchar *text = static_cast<const GLchar*>(source.c_str());
+
+    std::cout << std::endl << text << std::endl;
+    glShaderSource (shader, 1, &text, &textLength);
       
     //check whether the shader loads fine
     GLint status;
@@ -56,7 +60,8 @@ namespace handy
       glGetShaderiv (shader, GL_INFO_LOG_LENGTH, &infoLogLength);
       GLchar *infoLog= new GLchar[infoLogLength];
       glGetShaderInfoLog (shader, infoLogLength, NULL, infoLog);
-      LOG(INFO) << "Shader compile log: " << infoLog;
+      LOG(ERROR) << "Shader compile log: " << infoLog;
+      google::FlushLogFiles(google::ERROR);
       delete [] infoLog;
     }
     shaders[totalShaders++] = shader;
@@ -85,7 +90,8 @@ namespace handy
       glGetProgramiv (program, GL_INFO_LOG_LENGTH, &infoLogLength);
       GLchar *infoLog= new GLchar[infoLogLength];
       glGetProgramInfoLog (program, infoLogLength, NULL, infoLog);
-      LOG(INFO) << "Shader link log: " << infoLog;
+      LOG(ERROR) << "Shader link log: " << infoLog;
+      google::FlushLogFiles(google::ERROR);
       delete [] infoLog;
     }
 
@@ -96,7 +102,8 @@ namespace handy
       glGetProgramiv (program, GL_INFO_LOG_LENGTH, &infoLogLength);
       GLchar *infoLog= new GLchar[infoLogLength];
       glGetProgramInfoLog (program, infoLogLength, NULL, infoLog);
-      LOG(INFO) << "Shader validation log: " << infoLog;
+      LOG(ERROR) << "Shader validation log: " << infoLog;
+      google::FlushLogFiles(google::ERROR);
       delete [] infoLog;
     }
 
