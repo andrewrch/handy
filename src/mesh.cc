@@ -263,11 +263,10 @@ namespace handy
         BoneInfo bi;			
         boneInfo.push_back(bi);
 
-        memcpy(&boneInfo[boneIndex].boneOffset, &mesh->mBones[i]->mOffsetMatrix,
-            16*sizeof(GLfloat));
-        // Transpose because glm is column major
-        boneInfo[boneIndex].boneOffset = glm::transpose(
-            boneInfo[boneIndex].boneOffset);
+        glm::mat4 b;
+        memcpy(&b, &mesh->mBones[i]->mOffsetMatrix, 16*sizeof(GLfloat));
+        b = glm::transpose(b);
+        boneInfo[boneIndex].boneOffset = b;
         boneMapping[boneName] = boneIndex;
       }
       else 

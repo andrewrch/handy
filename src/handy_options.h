@@ -6,6 +6,7 @@
 #include <exception>
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace handy
 {
@@ -54,6 +55,7 @@ namespace handy
         camPos(0.0f),
         camTarget(0.0f),
         camUp(0.0f),
+        pose(27),
         cmdOptions(getCommandLineOnlyArgs()),
         cfgOptions(getConfigFileOnlyArgs()),
         genOptions(getGeneralArgs())
@@ -80,6 +82,8 @@ namespace handy
       glm::vec3 getCameraTarget() { return camTarget; }
       glm::vec3 getCameraUp() { return camUp; }
 
+      std::vector<double>& getPoseVector() { return pose; }
+
     private:
       po::options_description getCommandLineOnlyArgs();
       po::options_description getConfigFileOnlyArgs();
@@ -94,12 +98,41 @@ namespace handy
       void setCamPosX(float x) { camPos.x = x; }
       void setCamPosY(float y) { camPos.y = y; }
       void setCamPosZ(float z) { camPos.z = z; }
-      void setCamLookX(float x) { camTarget.x = x; }
-      void setCamLookY(float y) { camTarget.y = y; }
-      void setCamLookZ(float z) { camTarget.y = z; }
+      void setCamTargetX(float x) { camTarget.x = x; }
+      void setCamTargetY(float y) { camTarget.y = y; }
+      void setCamTargetZ(float z) { camTarget.y = z; }
       void setCamUpX(float x) { camUp.x = x; }
       void setCamUpY(float y) { camUp.y = y; }
       void setCamUpZ(float z) { camUp.z = z; }
+
+      // Pose :(
+      void setPose0(float p) { pose[0] = p; }
+      void setPose1(float p) { pose[1] = p; }
+      void setPose2(float p) { pose[2] = p; }
+      void setPose3(float p) { pose[3] = p; }
+      void setPose4(float p) { pose[4] = p; }
+      void setPose5(float p) { pose[5] = p; }
+      void setPose6(float p) { pose[6] = p; }
+      void setPose7(float p) { pose[7] = p; }
+      void setPose8(float p) { pose[8] = p; }
+      void setPose9(float p) { pose[9] = p; }
+      void setPose10(float p) { pose[10] = p; }
+      void setPose11(float p) { pose[11] = p; }
+      void setPose12(float p) { pose[12] = p; }
+      void setPose13(float p) { pose[13] = p; }
+      void setPose14(float p) { pose[14] = p; }
+      void setPose15(float p) { pose[15] = p; }
+      void setPose16(float p) { pose[16] = p; }
+      void setPose17(float p) { pose[17] = p; }
+      void setPose18(float p) { pose[18] = p; }
+      void setPose19(float p) { pose[19] = p; }
+      void setPose20(float p) { pose[20] = p; }
+      void setPose21(float p) { pose[21] = p; }
+      void setPose22(float p) { pose[22] = p; }
+      void setPose23(float p) { pose[23] = p; }
+      void setPose24(float p) { pose[24] = p; }
+      void setPose25(float p) { pose[25] = p; }
+      void setPose26(float p) { pose[26] = p; }
 
       // Logfile
       std::string logfile;
@@ -109,6 +142,9 @@ namespace handy
       std::string shaderDir, fragmentShader, vertexShader;
       // Camera properties
       glm::vec3 camPos, camTarget, camUp;
+      // Pose
+      std::vector<double> pose;
+
       po::options_description cmdOptions, cfgOptions, genOptions;
   };
 };

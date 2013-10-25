@@ -68,15 +68,7 @@ namespace handy
         }
 
         hand_mesh.loadMesh(options.getHandFile());
-        std::vector<double> pose(27);
-        for (int i = 0; i < 27; i++)
-          pose[i] = 0;
-
-        pose[0] = 0.0;
-        pose[10] = 0.5;
-        pose[17] = 1.0;
-
-        auto transforms = hand_mesh.setPose(pose);
+        auto transforms = hand_mesh.setPose(options.getPoseVector());
 
         std::cout << "Number bones " << transforms.size() << std::endl;
 

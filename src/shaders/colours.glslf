@@ -1,14 +1,9 @@
 #version 330
 
-in vec2 TexCoord0;
-in vec3 Normal0;
-in vec3 WorldPos0;
-in vec4 colour;
+in vec4 vsVertexColourOut;
 out vec4 fragColour;
-
-uniform sampler2D gSampler;
 
 void main()
 {
-    fragColour = colour;//ktexture2D(gSampler, TexCoord0.xy);
+    fragColour = vsVertexColourOut;
 }

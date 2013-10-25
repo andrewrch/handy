@@ -24,7 +24,6 @@ namespace handy
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setConfigFile), 
            this)), "config file location")
     ;
-
     return desc;
   }
 
@@ -46,15 +45,15 @@ namespace handy
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamPosZ),
          this)), "Camera z position")
       // Now the look at point
-      ("camera-look-x", po::value<float>()->default_value(0.0f)
-       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamLookX),
-         this)), "Camera x lookat")
-      ("camera-look-y", po::value<float>()->default_value(0.0f)
-       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamLookY),
-         this)), "Camera y lookat")
-      ("camera-look-z", po::value<float>()->default_value(0.0f)
-       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamLookZ),
-         this)), "Camera z lookat")
+      ("camera-target-x", po::value<float>()->default_value(0.0f)
+       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamTargetX),
+         this)), "Camera x target")
+      ("camera-target-y", po::value<float>()->default_value(0.0f)
+       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamTargetY),
+         this)), "Camera y target")
+      ("camera-target-z", po::value<float>()->default_value(0.0f)
+       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamTargetZ),
+         this)), "Camera z target")
       // And the up direction
       ("camera-up-x", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamUpX),
@@ -79,9 +78,89 @@ namespace handy
       ("hand-model", po::value<std::string>()->default_value("hand.dae")->
        notifier(std::bind1st(std::mem_fun(&HandyOptions::setHandFile),
            this)), "Location of the hand model file")
-    ;
       // Pose
-      // Tomorrow morning....
+      ("pose0", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose0),
+           this)), "Set 1st element of pose vector")
+      ("pose1", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose1),
+           this)), "Set 2nd element of pose vector")
+      ("pose2", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose2),
+           this)), "Set 3rd element of pose vector")
+      ("pose3", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose3),
+           this)), "Set 4th element of pose vector")
+      ("pose4", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose4),
+           this)), "Set 5th element of pose vector")
+      ("pose5", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose5),
+           this)), "Set 6th element of pose vector")
+      ("pose6", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose6),
+           this)), "Set 7th element of pose vector")
+      ("pose7", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose7),
+           this)), "Set 8th element of pose vector")
+      ("pose8", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose8),
+           this)), "Set 9th element of pose vector")
+      ("pose9", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose9),
+           this)), "Set 10th element of pose vector")
+      ("pose10", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose10),
+           this)), "Set 11th element of pose vector")
+      ("pose11", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose11),
+           this)), "Set 12th element of pose vector")
+      ("pose12", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose12),
+           this)), "Set 13th element of pose vector")
+      ("pose13", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose13),
+           this)), "Set 14th element of pose vector")
+      ("pose14", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose14),
+           this)), "Set 15th element of pose vector")
+      ("pose15", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose15),
+           this)), "Set 16th element of pose vector")
+      ("pose16", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose16),
+           this)), "Set 17th element of pose vector")
+      ("pose17", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose17),
+           this)), "Set 18th element of pose vector")
+      ("pose18", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose18),
+           this)), "Set 19th element of pose vector")
+      ("pose19", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose19),
+           this)), "Set 20th element of pose vector")
+      ("pose20", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose20),
+           this)), "Set 21st element of pose vector")
+      ("pose21", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose21),
+           this)), "Set 22nd element of pose vector")
+      ("pose22", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose22),
+           this)), "Set 23rd element of pose vector")
+      ("pose23", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose23),
+           this)), "Set 24th element of pose vector")
+      ("pose24", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose24),
+           this)), "Set 25th element of pose vector")
+      ("pose25", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose25),
+           this)), "Set 26th element of pose vector")
+      ("pose26", po::value<double>()->default_value(0)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose26),
+           this)), "Set 27th element of pose vector")
+    ;
     return desc;
 
   }
