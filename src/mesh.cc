@@ -291,6 +291,8 @@ namespace handy
 
     bool ret = true;
 
+    std::cout << filename << std::endl;
+
     // Initialize the materials
     for (unsigned int i = 0 ; i < scene->mNumMaterials; i++) 
     {
@@ -304,26 +306,27 @@ namespace handy
         if (material->GetTexture(aiTextureType_DIFFUSE, 0, 
             &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS) 
         {
-          fs::path fullPath(dir / path.data);
-          textures[i] = new Texture(GL_TEXTURE_2D, fullPath.string());
+          fs::path texPath(dir / path.data);
+          textures[i] = new Texture(GL_TEXTURE_2D, texPath.string());
 
           if (!textures[i]->load()) 
           {
-            LOG(ERROR) << "Error loading texture : " << fullPath;
+            LOG(ERROR) << "Error loading texture : " << texPath;
             delete textures[i];
             textures[i] = nullptr;
             ret = false;
           }
           else 
-            LOG(INFO) << "Loaded texture: " << fullPath;
+            LOG(INFO) << "Loaded texture: " << texPath;
         }
       }
 
       // Load a white texture in case the model does not include its own texture
       if (!textures[i]) 
       {
-        textures[i] = new Texture(GL_TEXTURE_2D, "./white.png");
-        LOG(INFO) << "Loaded texture: ./white.png";
+        fs::path texPath(dir / "white.png");
+        textures[i] = new Texture(GL_TEXTURE_2D, texPath.string());
+        LOG(INFO) << "Loaded texture: " << texPath;
         ret = textures[i]->load();
       }
     }

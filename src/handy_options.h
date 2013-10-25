@@ -9,8 +9,7 @@
 
 namespace handy
 {
-  // This is probably bad practise but it's only in my
-  // namespace!
+  // This is probably bad practise but at least it's only in handy ns
   namespace po = boost::program_options;
 
   /**
@@ -26,6 +25,14 @@ namespace handy
         : std::runtime_error(msg)
       { }
   };
+  class HandyOptionsRequiredArgException : public po::required_option
+  {
+    public:
+      HandyOptionsRequiredArgException(const std::string& msg) 
+        : po::required_option(msg)
+      { }
+  };
+
 
   /*
    * This is really just a data structure to hold program options to 
@@ -46,25 +53,16 @@ namespace handy
         vertexShader(""),
         camPos(0.0f),
         camTarget(0.0f),
-        camUp(0.0f)
+        camUp(0.0f),
+        cmdOptions(getCommandLineOnlyArgs()),
+        cfgOptions(getConfigFileOnlyArgs()),
+        genOptions(getGeneralArgs())
       { }
 
-      void setLogfile(const std::string l) { logfile = l; std::cout << "logfile: " << l << std::endl; }
-      void setConfigFile(const std::string c) { configFile = c; std::cout << "conffile: " << c << std::endl;  }
-      void setHandFile(const std::string h) { handFile = h; }
-      void setShaderDir(const std::string s) { shaderDir = s; }
-      void setFragmentShader(const std::string f) { fragmentShader = f; }
-      void setVertexShader(const std::string v) { vertexShader = v; }
-      void setCamPosX(float x) { camPos.x = x; }
-      void setCamPosY(float y) { camPos.y = y; }
-      void setCamPosZ(float z) { camPos.z = z; }
-      void setCamLookX(float x) { camTarget.x = x; }
-      void setCamLookY(float y) { camTarget.y = y; }
-      void setCamLookZ(float z) { camTarget.y = z; }
-      void setCamUpX(float x) { camUp.x = x; }
-      void setCamUpY(float y) { camUp.y = y; }
-      void setCamUpZ(float z) { camUp.z = z; }
+      bool parse(int argc, char* argv[]);
+      void printHelp();
 
+      // Make these a bit tidier/move them to .cc
       std::string& getLogfile() { return logfile; }
       std::string& getConfigFile() { return configFile; }
       std::string& getHandFile() { return handFile; }
@@ -83,6 +81,26 @@ namespace handy
       glm::vec3 getCameraUp() { return camUp; }
 
     private:
+      po::options_description getCommandLineOnlyArgs();
+      po::options_description getConfigFileOnlyArgs();
+      po::options_description getGeneralArgs();
+      // private setters
+      void setLogfile(const std::string l) { logfile = l; }
+      void setConfigFile(const std::string c) { configFile = c; }
+      void setHandFile(const std::string h) { handFile = h; }
+      void setShaderDir(const std::string s) { shaderDir = s; }
+      void setFragmentShader(const std::string f) { fragmentShader = f; }
+      void setVertexShader(const std::string v) { vertexShader = v; }
+      void setCamPosX(float x) { camPos.x = x; }
+      void setCamPosY(float y) { camPos.y = y; }
+      void setCamPosZ(float z) { camPos.z = z; }
+      void setCamLookX(float x) { camTarget.x = x; }
+      void setCamLookY(float y) { camTarget.y = y; }
+      void setCamLookZ(float z) { camTarget.y = z; }
+      void setCamUpX(float x) { camUp.x = x; }
+      void setCamUpY(float y) { camUp.y = y; }
+      void setCamUpZ(float z) { camUp.z = z; }
+
       // Logfile
       std::string logfile;
       std::string configFile;
@@ -91,19 +109,6 @@ namespace handy
       std::string shaderDir, fragmentShader, vertexShader;
       // Camera properties
       glm::vec3 camPos, camTarget, camUp;
-  };
-
-  class HandyOptionsParser
-  {
-    friend HandyOptions;
-    public:
-      HandyOptionsParser() {};
-      bool parse(int argc, char* argv[]);
-      HandyOptions getHandyOptions() { return options; };
-
-    private:
-      po::options_description initialiseCommandLineArgs();
-      po::options_description initialiseConfigFileArgs();
-      HandyOptions options;
+      po::options_description cmdOptions, cfgOptions, genOptions;
   };
 };

@@ -111,22 +111,29 @@ void shutdown(int code)
 
 int main(int argc, char* argv[])
 {
-  // Parse command line arguments
-  handy::HandyOptionsParser parser;
-  bool carryOn = parser.parse(argc, argv);
-
-  // If help requested
-  if (!carryOn)
-    exit(0);
-
+  bool helpNeeded = false;
   handy::HandyOptions options;
   try
   {
-    options = parser.getHandyOptions();
+    helpNeeded = options.parse(argc, argv);
+  }
+  catch (const handy::HandyOptionsRequiredArgException& e)
+  {
+    std::cout << "Required argument not supplied (" << e.what() << "see " \
+      "./handy --help for usage" << std::endl;
+    exit(1);
   }
   catch (const handy::HandyOptionsParsingException& e)
   {
+    std::cout << "Error parsing command line options, please try " \
+      "./handy --help for usage" << std::endl;
     exit(1);
+  }
+
+  if (helpNeeded)
+  {
+    options.printHelp();
+    exit(0);
   }
 
   // Set up log file

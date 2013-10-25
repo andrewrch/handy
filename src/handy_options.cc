@@ -1,77 +1,95 @@
 #include "handy_options.h"
 #include <string>
 #include <functional>
+// Logging
+#include <glog/logging.h>
 
 namespace handy
 {
-  po::options_description HandyOptionsParser::initialiseCommandLineArgs()
+  void HandyOptions::printHelp()
   {
-    po::options_description desc("Command line options");
+    po::options_description desc;
+    desc.add(cmdOptions).add(cfgOptions).add(genOptions);
+    std::cout << desc << std::endl;
+  }
+
+  po::options_description HandyOptions::getCommandLineOnlyArgs()
+  {
+    po::options_description desc("Command line only options");
       // Declare the supported options.
     desc.add_options()
     // Some weird operator overloading/chaining going on here
       ("help", "produce help message")
-      ("logfile", po::value<std::string>()->default_value("handy_logfile")
-       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setLogfile), 
-           &options)), "specify log file")
       ("config", po::value<std::string>()->default_value("handy.cfg")
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setConfigFile), 
-           &options)), "config file location")
+           this)), "config file location")
     ;
 
     return desc;
   }
 
-  po::options_description HandyOptionsParser::initialiseConfigFileArgs()
+  po::options_description HandyOptions::getGeneralArgs()
   {
-    po::options_description desc("Configuration file options");
+    po::options_description desc("General options");
     desc.add_options()
+      ("logfile", po::value<std::string>()->default_value("handy_logfile")
+       ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setLogfile), 
+           this)), "specify log file")
       // First camera position
-      ("camera_pos_x", po::value<float>()->default_value(0.0f)
+      ("camera-pos-x", po::value<float>()->default_value(10.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamPosX),
-         &options)), "Camera x position")
-      ("camera_pos_y", po::value<float>()->default_value(10.0f)
+         this)), "Camera x position")
+      ("camera-pos-y", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamPosY),
-         &options)), "Camera y position")
-      ("camera_pos_z", po::value<float>()->default_value(0.0f)
+         this)), "Camera y position")
+      ("camera-pos-z", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamPosZ),
-         &options)), "Camera z position")
+         this)), "Camera z position")
       // Now the look at point
-      ("camera_look_x", po::value<float>()->default_value(0.0f)
+      ("camera-look-x", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamLookX),
-         &options)), "Camera x lookat")
-      ("camera_look_y", po::value<float>()->default_value(0.0f)
+         this)), "Camera x lookat")
+      ("camera-look-y", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamLookY),
-         &options)), "Camera y lookat")
-      ("camera_look_z", po::value<float>()->default_value(0.0f)
+         this)), "Camera y lookat")
+      ("camera-look-z", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamLookZ),
-         &options)), "Camera z lookat")
+         this)), "Camera z lookat")
       // And the up direction
-      ("camera_up_x", po::value<float>()->default_value(0.0f)
+      ("camera-up-x", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamUpX),
-         &options)), "Camera x up direction")
-      ("camera_up_y", po::value<float>()->default_value(1.0f)
+         this)), "Camera x up direction")
+      ("camera-up-y", po::value<float>()->default_value(1.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamUpY),
-         &options)), "Camera y up direction")
-      ("camera_up_z", po::value<float>()->default_value(0.0f)
+         this)), "Camera y up direction")
+      ("camera-up-z", po::value<float>()->default_value(0.0f)
        ->notifier(std::bind1st(std::mem_fun(&HandyOptions::setCamUpZ),
-         &options)), "Camera z up direction")
+         this)), "Camera z up direction")
       // Shaders
-      ("shader_dir", po::value<std::string>()->default_value("src/shaders")->
+      ("shader-dir", po::value<std::string>()->default_value("src/shaders")->
        notifier(std::bind1st(std::mem_fun(&HandyOptions::setShaderDir),
-         &options)), "Directory containing shaders")
-      ("fragment_shader", po::value<std::string>()->default_value("bones.glslf")->
+         this)), "Directory containing shaders")
+      ("fragment-shader", po::value<std::string>()->default_value("bones.glslf")->
        notifier(std::bind1st(std::mem_fun(&HandyOptions::setFragmentShader),
-           &options)), "Fragment shader")
-      ("vertex_shader", po::value<std::string>()->default_value("bones.glslv")->
-       notifier(std::bind1st(std::mem_fun(&HandyOptions::setFragmentShader),
-           &options)), "Vertex shader")
+           this)), "Fragment shader")
+      ("vertex-shader", po::value<std::string>()->default_value("bones.glslv")->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setVertexShader),
+           this)), "Vertex shader")
       // Hand model
-      ("hand_model", po::value<std::string>()->default_value("hand.dae")->
+      ("hand-model", po::value<std::string>()->default_value("hand.dae")->
        notifier(std::bind1st(std::mem_fun(&HandyOptions::setHandFile),
-           &options)), "Location of the hand model file")
+           this)), "Location of the hand model file")
+    ;
       // Pose
       // Tomorrow morning....
+    return desc;
+
+  }
+
+  po::options_description HandyOptions::getConfigFileOnlyArgs()
+  {
+    po::options_description desc("Configuration file only options");
+    desc.add_options()
     ;
 
     return desc;
@@ -81,20 +99,18 @@ namespace handy
    * Parses the command line arguments and extracts all required
    * information.
    *
-   * @return boolean value.  Only ever false if the user has requested
-   * help.
+   * @return boolean value. This is true if the user has requested the help
+   * message
    */
-  bool HandyOptionsParser::parse(int argc, char* argv[])
+  bool HandyOptions::parse(int argc, char* argv[])
   {
-    bool carryOn = true;
     po::variables_map vm;
-
     // Now try processing the args and config
-    po::options_description desc;
-    desc.add(initialiseCommandLineArgs());
+    po::options_description cmdDesc;
+    cmdDesc.add(cmdOptions).add(genOptions);
     try
     {
-      po::store(po::parse_command_line(argc, argv, desc), vm);
+      po::store(po::parse_command_line(argc, argv, cmdDesc), vm);
     }
     catch (boost::program_options::error& e)
     {
@@ -102,18 +118,15 @@ namespace handy
       std::cerr << e.what() << ")" << std::endl;
       throw HandyOptionsParsingException("Parsing failed");
     }
+    // Call this so that command line args have higher priority than 
+    // config file args (vm is only updated by first attemp to update value)
     po::notify(vm);
 
-    if (vm.count("help")) 
-    {
-      std::cout << desc;
-      carryOn = false;
-    }
-
-    desc.add(initialiseConfigFileArgs());
+    po::options_description cfgDesc;
+    cfgDesc.add(cfgOptions).add(genOptions);
     try
     {
-      po::store(po::parse_config_file<char>(options.getConfigFile().data(), desc), vm);
+      po::store(po::parse_config_file<char>(configFile.data(), cfgDesc), vm);
     }
     catch (boost::program_options::error& e)
     {
@@ -126,6 +139,11 @@ namespace handy
     // structure
     po::notify(vm);
 
-    return carryOn;
+    /* WARNING!!!!!
+     * Multiple returns.  This ONLY happens if help is required from command 
+     * line */
+    if (vm.count("help")) 
+      return true;
+    return false;
   }
 }
