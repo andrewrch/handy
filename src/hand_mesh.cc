@@ -40,6 +40,9 @@ namespace handy
                   pose[static_cast<unsigned int>(Hand::Rotation::Y)],
                   pose[static_cast<unsigned int>(Hand::Rotation::Z)])));
 
+    //logMatrix(globalTrans, "Global translate");
+    //logMatrix(globalRot, "Global rotate");
+
     matrices["carpals"] = globalTrans * globalRot;
 
     // Now put all the right numbers in the right place
@@ -128,10 +131,11 @@ namespace handy
                                    const glm::mat4& parentTransform)
   { 
     std::string nodeName(node->mName.data);
-    std::cout << nodeName << std::endl;
     glm::mat4 nodeTransformation;
     memcpy(&nodeTransformation, &node->mTransformation, 16*sizeof(GLfloat));
     nodeTransformation = glm::transpose(nodeTransformation);
+
+    //logMatrix(nodeTransformation, nodeName);
 
     if (matrices.find(nodeName) != matrices.end())
       nodeTransformation = nodeTransformation * matrices.find(nodeName)->second;
@@ -143,9 +147,12 @@ namespace handy
         boneInfo[boneIndex].finalTransformation = globalInverseTransform * 
                                                   globalTransformation * 
                                                   boneInfo[boneIndex].boneOffset;
+
+        //logMatrix(globalTransformation, "Global trans");
+        //logMatrix(boneInfo[boneIndex].boneOffset, "Bone offset");
+        //logMatrix(nodeTransformation, "Node tranformation");
+        //logMatrix(boneInfo[boneIndex].finalTransformation, "Final trans");
     }
-    else
-      std::cout << "Bone mapping not there: " << nodeName << std::endl;
     
     // Now process all children
     for (uint i = 0 ; i < node->mNumChildren ; i++) {

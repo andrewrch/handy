@@ -70,8 +70,6 @@ namespace handy
         hand_mesh.loadMesh(options.getHandFile());
         auto transforms = hand_mesh.setPose(options.getPoseVector());
 
-        std::cout << "Number bones " << transforms.size() << std::endl;
-
         for (int i = 0; i < transforms.size(); i++)
           glUniformMatrix4fv(bones[i], 1, false, glm::value_ptr(transforms[i]));
       }

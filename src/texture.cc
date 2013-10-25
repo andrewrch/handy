@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include "texture.h"
+#include <glog/logging.h>
 
 namespace handy 
 {
@@ -35,8 +36,8 @@ namespace handy
           image->write(&blob, "RGBA");
       }
       catch (Magick::Error& Error) {
-          std::cout << "Error loading texture '" << fileName;
-          std::cout << "': " << Error.what() << std::endl;
+          LOG(ERROR) << "Error loading texture '" << fileName;
+          LOG(ERROR) << "': " << Error.what() << std::endl;
           return false;
       }
 

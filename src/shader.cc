@@ -47,8 +47,6 @@ namespace handy
 
     GLint textLength = static_cast<GLint>(source.size());
     const GLchar *text = static_cast<const GLchar*>(source.c_str());
-
-    std::cout << std::endl << text << std::endl;
     glShaderSource (shader, 1, &text, &textLength);
       
     //check whether the shader loads fine

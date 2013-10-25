@@ -18,6 +18,7 @@
 
 #include <assert.h>
 #include "boost/filesystem.hpp"
+#include <iomanip>
 #include "mesh.h"
 
 // Logging
@@ -55,6 +56,24 @@ namespace handy
   { 
     clear(); 
   }
+
+  void Mesh::logMatrix(const glm::mat4& m, const std::string& s)
+  {
+    std::cout << s << " ";
+    for (int i = 0; i < 69 - s.length(); i ++)
+      std::cout << "*";
+    std::cout << std::endl;
+    for (int i = 0; i < 4; i++)
+    {
+      std::cout << "[" << std::fixed << std::setw( 6 ) << std::setprecision( 3 ) 
+          << std::setfill( ' ' ) << m[0][i] << "\t" << m[1][i];
+      std::cout << "\t" << m[2][i] << "\t" << m[3][i] << "]" << std::endl; 
+    }
+    for (int i = 0; i < 70; i ++)
+      std::cout << "*";
+    std::cout << std::endl;
+  }
+
 
   void Mesh::clear()
   {
@@ -101,9 +120,8 @@ namespace handy
       globalInverseTransform = glm::transpose(globalInverseTransform);
       globalInverseTransform = glm::inverse(globalInverseTransform);
 
-      //glm::mat4 m = globalInverseTransform;
-      //for (int i = 0; i < 4; i++)
-      //  std::cout << m[i][0] << " " << m[i][1] << " " << m[i][2] << " " << m[i][3] << std::endl; 
+      //logMatrix(globalInverseTransform, "Global inverse");
+
       ret = initFromScene(filename);
     }
     else 
@@ -289,8 +307,6 @@ namespace handy
     fs::path dir = f.parent_path();
 
     bool ret = true;
-
-    std::cout << filename << std::endl;
 
     // Initialize the materials
     for (unsigned int i = 0 ; i < scene->mNumMaterials; i++) 

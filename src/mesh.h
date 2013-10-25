@@ -54,7 +54,6 @@ namespace handy
       void render();
 
     protected:
-
       static const int INVALID_MATERIAL = 0xFFFFFFFF;
       static const int INVALID_OGL_VALUE = 0xFFFFFFFF;
       static const int NUM_BONES_PER_VERTEX = 16;
@@ -87,6 +86,7 @@ namespace handy
         void addBoneData(uint boneID, float weight);
       };
 
+      void logMatrix(const glm::mat4& m, const std::string& s);
       bool initFromScene(const std::string& filename);
       void initMesh(unsigned int index, const aiMesh* mesh,
                     std::vector<glm::vec3>& positions,
