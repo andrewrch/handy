@@ -11,10 +11,7 @@ find_package(GLEW REQUIRED)
 # Search for packages do not provide cmake config but have pkgconfig
 find_package(PkgConfig REQUIRED)
 
-find_package(Assimp REQUIRED)
-if(Assimp_FOUND)
-  message(STATUS "Found Assimp: ${Assimp_LIBRARIES}")
-endif(Assimp_FOUND)
+pkg_search_module(Assimp REQUIRED assimp)
 
 # Hide this for now as I don't need glfw3
 #pkg_search_module(GLFW REQUIRED glfw3) 

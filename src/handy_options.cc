@@ -200,6 +200,8 @@ namespace handy
     // Call this so that command line args have higher priority than 
     // config file args (vm is only updated by first attemp to update value)
     po::notify(vm);
+    if (vm.count("help")) 
+      return true;
 
     po::options_description cfgDesc;
     cfgDesc.add(cfgOptions).add(genOptions);
@@ -218,11 +220,6 @@ namespace handy
     // structure
     po::notify(vm);
 
-    /* WARNING!!!!!
-     * Multiple returns.  This ONLY happens if help is required from command 
-     * line */
-    if (vm.count("help")) 
-      return true;
     return false;
   }
 }
