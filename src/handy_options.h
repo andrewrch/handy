@@ -56,6 +56,7 @@ namespace handy
         camTarget(0.0f),
         camUp(0.0f),
         pose(27),
+        display(true),
         cmdOptions(getCommandLineOnlyArgs()),
         cfgOptions(getConfigFileOnlyArgs()),
         genOptions(getGeneralArgs())
@@ -63,24 +64,25 @@ namespace handy
 
       bool parse(int argc, char* argv[]);
       void printHelp();
+      bool showDisplay() { return display; }
 
       // Make these a bit tidier/move them to .cc
       std::string& getLogfile() { return logfile; }
       std::string& getConfigFile() { return configFile; }
       std::string& getHandFile() { return handFile; }
 
-      std::string getFragmentShader() 
+      std::string getFragmentShader()
       { 
         return (boost::filesystem::path(shaderDir) / fragmentShader).string(); 
       }
-      std::string getVertexShader()
+      std::string getVertexShader() 
       {
         return (boost::filesystem::path(shaderDir) / vertexShader).string(); 
       }
 
-      glm::vec3 getCameraPos() { return camPos; }
-      glm::vec3 getCameraTarget() { return camTarget; }
-      glm::vec3 getCameraUp() { return camUp; }
+      glm::vec3& getCameraPos() { return camPos; }
+      glm::vec3& getCameraTarget() { return camTarget; }
+      glm::vec3& getCameraUp() { return camUp; }
 
       std::vector<double>& getPoseVector() { return pose; }
 
@@ -134,6 +136,8 @@ namespace handy
       void setPose25(float p) { pose[25] = p; }
       void setPose26(float p) { pose[26] = p; }
 
+      void setDisplay(bool d) { display = d; }
+
       // Logfile
       std::string logfile;
       std::string configFile;
@@ -144,6 +148,8 @@ namespace handy
       glm::vec3 camPos, camTarget, camUp;
       // Pose
       std::vector<double> pose;
+      // Render without viewer?
+      bool display;
 
       po::options_description cmdOptions, cfgOptions, genOptions;
   };

@@ -160,6 +160,10 @@ namespace handy
       ("pose26", po::value<double>()->default_value(0)->
        notifier(std::bind1st(std::mem_fun(&HandyOptions::setPose26),
            this)), "Set 27th element of pose vector")
+      ("display", po::value<bool>()->default_value(true)->
+       notifier(std::bind1st(std::mem_fun(&HandyOptions::setDisplay),
+           this)), "Display the viewer?")
+
     ;
     return desc;
 

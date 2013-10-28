@@ -2,7 +2,7 @@
 #include <cstdlib>
 #include <string>
 #include <exception>
-
+#include <QApplication>
 // GL
 #include <GL/glew.h>
 #include <GL/glfw.h>
@@ -11,87 +11,13 @@
 #include <glm/gtc/type_ptr.hpp>
 // Logging
 #include <glog/logging.h>
-
+// Handy source files
+#include "handy_viewer.h"
+#include "handy_renderer.h"
 #include "handy_options.h"
 #include "hand_mesh.h"
 #include "pipeline.h"
 #include "shader.h"
-
-namespace handy
-{
-  class HandyApp
-  {
-    public:
-      HandyApp(HandyOptions options)
-      {
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        //glFrontFace(GL_CW);
-        glCullFace(GL_BACK);
-        glEnable(GL_CULL_FACE);
-        //glDepthFunc(GL_GEQUAL);
-        glEnable(GL_DEPTH_TEST);
-        /* NOTE ******************************************************
-         * Basically everything here will be replaced with config file
-         * or command line arguments
-         ************************************************************/
-        float aspect = (float) 640 / 480;
-        pipeline.setCamera(options.getCameraPos(), 
-                           options.getCameraTarget(), 
-                           options.getCameraUp());
-        pipeline.setPerspectiveProj(45.6f, aspect, 1.0f, 100.0f);   
-
-        shader.loadFromFile(GL_VERTEX_SHADER, options.getVertexShader());
-        shader.loadFromFile(GL_FRAGMENT_SHADER, options.getFragmentShader());
-        shader.createAndLinkProgram();
-        shader.use();
-
-        // WVP
-        glm::mat4 wvp = pipeline.getVPTrans();
-        GLuint wvpLocation = shader.addUniform("gWVP");
-        glUniformMatrix4fv(wvpLocation, 1, false, glm::value_ptr(wvp));
-        // WV
-        glm::mat4 world = pipeline.getVTrans();
-        GLuint worldLocation = shader.addUniform("gWorld");
-        glUniformMatrix4fv(worldLocation, 1, false, glm::value_ptr(world));
-        // Texture
-        GLuint sampler = shader.addUniform("gSampler");
-        glUniform1i(sampler, 0);
-
-        const int BONES = 100;
-        GLuint bones[BONES];
-        for (int i = 0; i < BONES; i++)
-        {
-          char name[128];
-          memset(name, 0, sizeof(name));
-          snprintf(name, sizeof(name), "gBones[%d]", i);
-          bones[i] = shader.addUniform(name);
-        }
-
-        hand_mesh.loadMesh(options.getHandFile());
-        auto transforms = hand_mesh.setPose(options.getPoseVector());
-
-        for (int i = 0; i < transforms.size(); i++)
-          glUniformMatrix4fv(bones[i], 1, false, glm::value_ptr(transforms[i]));
-      }
-
-      bool run()
-      {
-        if (glfwGetKey(GLFW_KEY_ESC) == GLFW_PRESS)
-          return false;
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        hand_mesh.render();
-        glfwSwapBuffers();
-
-        return true;
-      }
-
-    private:
-      HandMesh hand_mesh;
-      Pipeline pipeline;
-      Shader shader;
-  };
-};
 
 void shutdown(int code)
 {
@@ -129,34 +55,55 @@ int main(int argc, char* argv[])
   // Set up log file
   google::InitGoogleLogging(options.getLogfile().c_str());
 
-  // Initialise GLFW
-  if (glfwInit() == GL_FALSE)
-    shutdown(1);
+  // Check whether we should display the viewer
+  if (options.showDisplay())
+  {
+    QApplication a(argc, argv);
+    HandyViewer w;
+    if (w.init(options))
+    {
+      w.show();
+      return a.exec();
+    }
+    else
+      shutdown(1);
+  }
 
-  // Get a glfw window.  This is required to do any rendering with OpenGL
-  int windowWidth = 640, windowHeight = 480;
-  if (!glfwOpenWindow(windowWidth, 
-        windowHeight, 
-        0, 0, 0, 0, 24, 0, 
-        GLFW_WINDOW))
-    shutdown(1);
-  glfwSetWindowTitle("Handy");
+  // **************************************************************
+  // 
+  // Need to sort this out so that it renders to a renderbuffer and 
+  // blits to a file when we don't want the viewer
+  //
+  //else
+  //{
+  //  // Initialise GLFW
+  //  if (glfwInit() == GL_FALSE)
+  //    shutdown(1);
+  //  // Get a glfw window
+  //  int windowWidth = 640, windowHeight = 480;
+  //  if (!glfwOpenWindow(windowWidth, 
+  //        windowHeight, 
+  //        0, 0, 0, 0, 24, 0, 
+  //        GLFW_WINDOW))
+  //  {
+  //    shutdown(1);
+  //  }
+  //  glfwSetWindowTitle("Handy");
+  //  int major, minor, rev;
+  //  glfwGetGLVersion(&major, &minor, &rev);
+  //  LOG(INFO) << "OpenGL version received: " \
+  //    << major << "." << minor << "." << rev;
+  //  glfwEnable(GLFW_STICKY_KEYS);
+  //}
+  //if (glewInit() != GLEW_OK)
+  //  shutdown(1);
 
-  int major, minor, rev;
-  glfwGetGLVersion(&major, &minor, &rev);
-  LOG(INFO) << "OpenGL version received: " \
-    << major << "." << minor << "." << rev;
-  glfwEnable(GLFW_STICKY_KEYS);
+  //// Build an app, pass program options
+  //handy::HandyApp *app = new handy::HandyApp(options);
 
-  if (glewInit() != GLEW_OK)
-    shutdown(1);
+  //// Run the main loop until it returns false
+  //do {} while (app->run());
 
-  // Build an app, pass program options
-  handy::HandyApp *app = new handy::HandyApp(options);
-
-  // Run the main loop until it returns false
-  do {} while (app->run());
-
-  delete app;
+  //delete app;
   shutdown(0);
 }

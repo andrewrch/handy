@@ -19,3 +19,6 @@ build/*
 
 # Vim temporary files
 *~
+
+# QTCreator user files
+*.user
